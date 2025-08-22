@@ -26,8 +26,10 @@ function goToHome() {
       <v-toolbar-title class="font-weight-bold" style="cursor: pointer;" @click="goToHome">
         INNYX Gestão de Produtos
       </v-toolbar-title>
+
       <v-spacer></v-spacer>
-      <div v-if="isAuthenticated" class="d-flex align-center">
+
+      <div v-if="isAuthenticated" class="d-flex align-center pr-4">
         <span class="mr-2 d-none d-sm-flex">Olá, {{ userName }}</span>
         <v-tooltip text="Sair do sistema">
           <template v-slot:activator="{ props }">
@@ -46,10 +48,11 @@ function goToHome() {
 </template>
 
 <style scoped>
-/* Adiciona um estilo para esconder o nome do usuário em telas muito pequenas */
+/* O CSS de centralização foi removido daqui */
 .d-sm-flex {
   display: flex !important;
 }
+
 @media (max-width: 600px) {
   .d-none.d-sm-flex {
     display: none !important;

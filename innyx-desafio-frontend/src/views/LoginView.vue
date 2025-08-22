@@ -3,8 +3,8 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
-const email = ref('leandro@teste.com'); // Valor padrão para facilitar o teste
-const password = ref('senha12345'); // Valor padrão para facilitar o teste
+const email = ref('leandro@teste.com');
+const password = ref('senha12345');
 const errorMessage = ref('');
 const loading = ref(false);
 
@@ -26,9 +26,12 @@ async function handleLogin() {
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="5" lg="4">
         <v-card class="elevation-12">
-          <v-toolbar color="primary" dark flat>
-            <v-toolbar-title class="text-center font-weight-bold">INNYX Gestão de Produtos</v-toolbar-title>
+          <v-toolbar color="primary" dark flat style="position: relative;">
+            <span class="login-card-title font-weight-bold text-h6">
+              INNYX Gestão de Produtos
+            </span>
           </v-toolbar>
+
           <v-card-text class="pa-6">
             <p class="text-h6 text-center mb-6">Acesse sua conta</p>
             <v-form @submit.prevent="handleLogin">
@@ -56,13 +59,14 @@ async function handleLogin() {
             </v-form>
           </v-card-text>
           <v-card-actions class="pa-6 pt-0">
-            <v-btn 
-              :loading="loading" 
-              @click="handleLogin" 
-              color="primary" 
-              variant="elevated" 
-              size="large" 
+            <v-btn
+              :loading="loading"
+              @click="handleLogin"
+              color="primary"
+              variant="elevated"
+              size="large"
               block
+              class="login-button"
             >
               Entrar
             </v-btn>
@@ -72,3 +76,25 @@ async function handleLogin() {
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.login-card-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+}
+
+.login-button {
+  transition: all 0.3s ease-in-out;
+  border: 2px solid transparent;
+}
+
+.login-button:hover {
+  background-color: white !important;
+  color: #673AB7 !important;
+  border: 2px solid #673AB7;
+}
+</style>

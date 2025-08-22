@@ -15,10 +15,8 @@ class ProdutoController extends Controller
      */
     public function index(Request $request)
     {
-        // Inicia a query para buscar produtos
-        $query = Produto::with('categoria'); // 'categoria' é o nome da relação que vamos criar no Model
+        $query = Produto::with('categoria');
 
-        // Verifica se há um termo de busca para nome ou descrição
         if ($request->has('busca')) {
             $termo = $request->input('busca');
             $query->where(function ($q) use ($termo) {
@@ -27,7 +25,6 @@ class ProdutoController extends Controller
             });
         }
 
-        // Executa a query com paginação de 10 itens por página
         $produtos = $query->paginate(10);
 
         return response()->json($produtos);
@@ -39,31 +36,26 @@ class ProdutoController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validação dos dados recebidos
+            // REGRAS DE VALIDAÇÃO CORRIGIDAS AQUI
             $validatedData = $request->validate([
-                'nome' => 'required|string|max:50',
-                'descricao' => 'required|string|max:200',
+                'nome' => 'required|string|max:50', // <-- Máximo de 50 caracteres
+                'descricao' => 'required|string|max:200', // <-- Máximo de 200 caracteres
                 'preco' => 'required|numeric|min:0',
                 'data_validade' => 'required|date|after_or_equal:today',
                 'imagem' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'categoria_id' => 'required|exists:categorias,id'
             ]);
 
-            // Lida com o upload da imagem
             if ($request->hasFile('imagem')) {
-                // Salva a imagem na pasta 'public/produtos' e obtém o nome do arquivo
                 $path = $request->file('imagem')->store('produtos', 'public');
                 $validatedData['imagem'] = basename($path);
             }
 
-            // Cria o produto no banco de dados
             $produto = Produto::create($validatedData);
 
-            // Retorna o produto criado com status 201 (Created)
             return response()->json($produto, 201);
 
         } catch (ValidationException $e) {
-            // Retorna os erros de validação em JSON
             return response()->json(['errors' => $e->errors()], 422);
         }
     }
@@ -73,7 +65,6 @@ class ProdutoController extends Controller
      */
     public function show(string $id)
     {
-        // Busca o produto pelo ID, incluindo a categoria relacionada
         $produto = Produto::with('categoria')->find($id);
 
         if (!$produto) {
@@ -95,28 +86,24 @@ class ProdutoController extends Controller
                 return response()->json(['message' => 'Produto não encontrado'], 404);
             }
 
-            // Validação dos dados (imagem não é obrigatória na atualização)
+            // REGRAS DE VALIDAÇÃO CORRIGIDAS AQUI
             $validatedData = $request->validate([
-                'nome' => 'sometimes|required|string|max:50',
-                'descricao' => 'sometimes|required|string|max:200',
+                'nome' => 'sometimes|required|string|max:50', // <-- Máximo de 50 caracteres
+                'descricao' => 'sometimes|required|string|max:200', // <-- Máximo de 200 caracteres
                 'preco' => 'sometimes|required|numeric|min:0',
                 'data_validade' => 'sometimes|required|date|after_or_equal:today',
                 'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'categoria_id' => 'sometimes|required|exists:categorias,id'
             ]);
 
-            // Se uma nova imagem for enviada
             if ($request->hasFile('imagem')) {
-                // Deleta a imagem antiga
                 if ($produto->imagem) {
                     Storage::disk('public')->delete('produtos/' . $produto->imagem);
                 }
-                // Salva a nova imagem
                 $path = $request->file('imagem')->store('produtos', 'public');
                 $validatedData['imagem'] = basename($path);
             }
 
-            // Atualiza o produto com os novos dados
             $produto->update($validatedData);
 
             return response()->json($produto);
@@ -137,15 +124,12 @@ class ProdutoController extends Controller
             return response()->json(['message' => 'Produto não encontrado'], 404);
         }
 
-        // Deleta a imagem associada ao produto
         if ($produto->imagem) {
             Storage::disk('public')->delete('produtos/' . $produto->imagem);
         }
 
-        // Deleta o produto do banco
         $produto->delete();
 
-        // Retorna uma resposta vazia com status 204 (No Content)
         return response()->json(null, 204);
     }
 }

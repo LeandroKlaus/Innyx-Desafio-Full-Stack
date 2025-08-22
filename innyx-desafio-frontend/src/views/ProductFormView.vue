@@ -22,6 +22,13 @@ const productId = computed(() => route.params.id);
 const isEditing = computed(() => !!productId.value);
 const pageTitle = computed(() => isEditing.value ? 'Editar Produto' : 'Novo Produto');
 
+// REGRAS DE VALIDAÇÃO PARA O FRONT-END
+const rules = {
+  required: (value: any) => !!value || 'Campo obrigatório.',
+  nomeLength: (value: string) => (value && value.length <= 50) || 'O nome não pode ter mais de 50 caracteres.',
+  descricaoLength: (value: string) => (value && value.length <= 200) || 'A descrição não pode ter mais de 200 caracteres.',
+};
+
 async function fetchCategorias() {
     try {
         const response = await api.get('/categorias');
@@ -100,11 +107,29 @@ onMounted(() => {
       <v-divider></v-divider>
       <v-card-text>
         <v-form @submit.prevent="handleSubmit">
-          <v-text-field label="Nome do Produto" v-model="produto.nome" :error-messages="errors.nome" variant="outlined" class="mb-2"></v-text-field>
-          <v-textarea label="Descrição" v-model="produto.descricao" :error-messages="errors.descricao" variant="outlined" class="mb-2"></v-textarea>
-          <v-text-field label="Preço" v-model="produto.preco" type="number" prefix="R$" :error-messages="errors.preco" variant="outlined" class="mb-2"></v-text-field>
-          <v-text-field label="Data de Validade" v-model="produto.data_validade" type="date" :error-messages="errors.data_validade" variant="outlined" class="mb-2"></v-text-field>
-          <v-select label="Categoria" :items="categorias" item-title="nome" item-value="id" v-model="produto.categoria_id" :error-messages="errors.categoria_id" variant="outlined" class="mb-2"></v-select>
+          <v-text-field 
+            label="Nome do Produto" 
+            v-model="produto.nome" 
+            :error-messages="errors.nome" 
+            variant="outlined" 
+            class="mb-2"
+            :counter="50"
+            :rules="[rules.required, rules.nomeLength]"
+          ></v-text-field>
+          
+          <v-textarea 
+            label="Descrição" 
+            v-model="produto.descricao" 
+            :error-messages="errors.descricao" 
+            variant="outlined" 
+            class="mb-2"
+            :counter="200"
+            :rules="[rules.required, rules.descricaoLength]"
+          ></v-textarea>
+          
+          <v-text-field label="Preço" v-model="produto.preco" type="number" prefix="R$" :error-messages="errors.preco" variant="outlined" class="mb-2" :rules="[rules.required]"></v-text-field>
+          <v-text-field label="Data de Validade" v-model="produto.data_validade" type="date" :error-messages="errors.data_validade" variant="outlined" class="mb-2" :rules="[rules.required]"></v-text-field>
+          <v-select label="Categoria" :items="categorias" item-title="nome" item-value="id" v-model="produto.categoria_id" :error-messages="errors.categoria_id" variant="outlined" class="mb-2" :rules="[rules.required]"></v-select>
           <v-file-input label="Imagem do Produto" @change="handleFileUpload" :error-messages="errors.imagem" variant="outlined" clearable></v-file-input>
 
           <v-divider class="my-4"></v-divider>
