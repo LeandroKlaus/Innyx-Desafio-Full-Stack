@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
-// URL base da sua API Laravel.
-// Lembre-se de rodar `php artisan serve` no seu backend.
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -13,12 +11,10 @@ const api = axios.create({
   }
 });
 
-// Interceptor: Executa antes de CADA requisição
 api.interceptors.request.use(config => {
   const authStore = useAuthStore();
   const token = authStore.token;
 
-  // Se o token existir, adiciona no cabeçalho Authorization
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

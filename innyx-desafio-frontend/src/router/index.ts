@@ -16,7 +16,7 @@ const router = createRouter({
       path: '/',
       name: 'products',
       component: ProductsListView,
-      meta: { requiresAuth: true } // Esta rota precisa de autenticação
+      meta: { requiresAuth: true }
     },
     {
       path: '/produtos/novo',
@@ -33,21 +33,15 @@ const router = createRouter({
   ]
 });
 
-// Guarda de Navegação Global
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   const requiresAuth = to.meta.requiresAuth;
 
-  // Se a rota exige autenticação e o usuário não está logado
   if (requiresAuth && !authStore.isAuthenticated) {
-    // Redireciona para a página de login
     next({ name: 'login' });
   } else if (to.name === 'login' && authStore.isAuthenticated) {
-    // Se o usuário já está logado e tenta acessar a página de login
-    // Redireciona para a home
     next({ name: 'products' });
   } else {
-    // Permite o acesso
     next();
   }
 });

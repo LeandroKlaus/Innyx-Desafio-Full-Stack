@@ -2,32 +2,33 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\CategoriaController;
-use App\Http\Controllers\Api\AuthController; // <-- IMPORTAR O NOVO CONTROLLER
+use App\Http\Controllers\Api\AuthController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
+Route::get('/create-test-user', function() {
+    User::where('email', 'teste@innyx.com')->delete();
+    $user = User::create([
+        'name' => 'Usuario Teste',
+        'email' => 'teste@innyx.com',
+        'password' => Hash::make('password'),
+    ]);
+    return response()->json([
+        'message' => 'Usuário de teste criado com sucesso!',
+        'user' => $user
+    ]);
+});
 
-// --- Rotas Públicas (não precisam de autenticação) ---
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('categorias', [CategoriaController::class, 'index']);
 
-
-// --- Rotas Protegidas (exigem autenticação via Sanctum) ---
 Route::middleware('auth:sanctum')->group(function () {
-    // Rota para verificar usuário autenticado
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    // Rota de logout
     Route::post('/logout', [AuthController::class, 'logout']);
-
-    // Rotas do CRUD de Produtos
     Route::apiResource('produtos', ProdutoController::class);
 });

@@ -5,11 +5,9 @@ import api from '@/services/api';
 import Spinner from '@/components/Spinner.vue';
 
 const router = useRouter();
-
 const produtos = ref<any[]>([]);
 const loading = ref(true);
 const search = ref('');
-
 const page = ref(1);
 const totalItems = ref(0);
 const itemsPerPage = ref(10);
@@ -18,10 +16,7 @@ async function fetchProducts() {
   loading.value = true;
   try {
     const response = await api.get('/produtos', {
-      params: {
-        page: page.value,
-        busca: search.value
-      }
+      params: { page: page.value, busca: search.value }
     });
     produtos.value = response.data.data;
     totalItems.value = response.data.total;
@@ -49,7 +44,6 @@ async function deleteProduct(id: number) {
 }
 
 onMounted(fetchProducts);
-
 watch(page, fetchProducts);
 watch(search, () => {
     page.value = 1;
@@ -75,23 +69,20 @@ watch(search, () => {
             flat
           ></v-text-field>
         </v-responsive>
-        <v-btn color="secondary" @click="router.push({ name: 'product-new' })" class="my-2" variant="elevated" size="large">
+        <v-btn color="secondary" @click="router.push({ name: 'product-new' })" class="my-2" variant="elevated">
           <v-icon start>mdi-plus</v-icon>
-          Adicionar
+          Adicionar Produto
         </v-btn>
       </v-card-title>
       <v-divider></v-divider>
-
       <div v-if="loading" class="text-center pa-12">
         <Spinner />
       </div>
-
       <v-card-text v-else-if="produtos.length === 0">
         <v-alert type="info" variant="tonal">
           Nenhum produto encontrado. Crie um novo produto para começar.
         </v-alert>
       </v-card-text>
-      
       <v-table v-else>
         <thead>
           <tr>
@@ -106,7 +97,6 @@ watch(search, () => {
             <td>{{ item.nome }}</td>
             <td>R$ {{ item.preco.toFixed(2).replace('.', ',') }}</td>
             <td>{{ new Date(item.data_validade + 'T00:00:00-03:00').toLocaleDateString('pt-BR') }}</td>
-            
             <td class="text-center">
                 <v-tooltip text="Editar Produto">
                     <template v-slot:activator="{ props }">

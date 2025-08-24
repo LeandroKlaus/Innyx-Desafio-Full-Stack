@@ -31,7 +31,6 @@ async function handleLogin() {
               INNYX Gestão de Produtos
             </span>
           </v-toolbar>
-
           <v-card-text class="pa-6">
             <p class="text-h6 text-center mb-6">Acesse sua conta</p>
             <v-form @submit.prevent="handleLogin">
@@ -86,12 +85,10 @@ async function handleLogin() {
   text-align: center;
   width: 100%;
 }
-
 .login-button {
   transition: all 0.3s ease-in-out;
   border: 2px solid transparent;
 }
-
 .login-button:hover {
   background-color: white !important;
   color: #673AB7 !important;

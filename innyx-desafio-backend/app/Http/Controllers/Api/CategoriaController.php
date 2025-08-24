@@ -8,15 +8,9 @@ use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        // Busca todas as categorias no banco de dados
         $categorias = Categoria::all();
-
-        // Retorna as categorias em formato JSON
         return response()->json($categorias);
     }
 }

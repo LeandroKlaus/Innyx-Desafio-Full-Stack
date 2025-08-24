@@ -10,9 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class ProdutoController extends Controller
 {
-    /**
-     * Listar todos os produtos com paginação e busca.
-     */
     public function index(Request $request)
     {
         $query = Produto::with('categoria');
@@ -26,20 +23,15 @@ class ProdutoController extends Controller
         }
 
         $produtos = $query->paginate(10);
-
         return response()->json($produtos);
     }
 
-    /**
-     * Armazenar um novo produto no banco de dados.
-     */
     public function store(Request $request)
     {
         try {
-            // REGRAS DE VALIDAÇÃO CORRIGIDAS AQUI
             $validatedData = $request->validate([
-                'nome' => 'required|string|max:50', // <-- Máximo de 50 caracteres
-                'descricao' => 'required|string|max:200', // <-- Máximo de 200 caracteres
+                'nome' => 'required|string|max:50',
+                'descricao' => 'required|string|max:200',
                 'preco' => 'required|numeric|min:0',
                 'data_validade' => 'required|date|after_or_equal:today',
                 'imagem' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -52,7 +44,6 @@ class ProdutoController extends Controller
             }
 
             $produto = Produto::create($validatedData);
-
             return response()->json($produto, 201);
 
         } catch (ValidationException $e) {
@@ -60,23 +51,15 @@ class ProdutoController extends Controller
         }
     }
 
-    /**
-     * Exibir um produto específico.
-     */
     public function show(string $id)
     {
         $produto = Produto::with('categoria')->find($id);
-
         if (!$produto) {
             return response()->json(['message' => 'Produto não encontrado'], 404);
         }
-
         return response()->json($produto);
     }
 
-    /**
-     * Atualizar um produto existente.
-     */
     public function update(Request $request, string $id)
     {
         try {
@@ -86,10 +69,9 @@ class ProdutoController extends Controller
                 return response()->json(['message' => 'Produto não encontrado'], 404);
             }
 
-            // REGRAS DE VALIDAÇÃO CORRIGIDAS AQUI
             $validatedData = $request->validate([
-                'nome' => 'sometimes|required|string|max:50', // <-- Máximo de 50 caracteres
-                'descricao' => 'sometimes|required|string|max:200', // <-- Máximo de 200 caracteres
+                'nome' => 'sometimes|required|string|max:50',
+                'descricao' => 'sometimes|required|string|max:200',
                 'preco' => 'sometimes|required|numeric|min:0',
                 'data_validade' => 'sometimes|required|date|after_or_equal:today',
                 'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -105,7 +87,6 @@ class ProdutoController extends Controller
             }
 
             $produto->update($validatedData);
-
             return response()->json($produto);
 
         } catch (ValidationException $e) {
@@ -113,9 +94,6 @@ class ProdutoController extends Controller
         }
     }
 
-    /**
-     * Remover um produto.
-     */
     public function destroy(string $id)
     {
         $produto = Produto::find($id);
@@ -129,7 +107,6 @@ class ProdutoController extends Controller
         }
 
         $produto->delete();
-
         return response()->json(null, 204);
     }
 }
