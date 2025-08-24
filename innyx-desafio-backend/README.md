@@ -31,7 +31,7 @@ Siga os passos abaixo para executar a aplicação localmente.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/seu-usuario/innyx-desafio-backend.git](https://github.com/seu-usuario/innyx-desafio-backend.git)
+    git clone [https://github.com/LeandroKlaus/innyx-desafio-backend.git](https://github.com/LeandroKlaus/innyx-desafio-backend.git)
     cd innyx-desafio-backend
     ```
 
